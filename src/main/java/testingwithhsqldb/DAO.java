@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 public class DAO {
@@ -38,5 +40,22 @@ public class DAO {
 		// dernière ligne : on renvoie le résultat
 		return result;
 	}
+        
+        public void ajouter(Product prod) throws DAOException{
+            String sql = "INSERT INTO PRODUCT VALUES(?,?,?)" ;
+       
+            try (Connection connection = myDataSource.getConnection();
+		PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setInt(1, prod.getCode());
+                stmt.setString(2, prod.getName());
+                stmt.setFloat(3, prod.getPrice());
+
+                stmt.executeUpdate();
+                
+            }catch (SQLException ex) {
+			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+			throw new DAOException(ex.getMessage());
+		}
+        }
 	
 }
